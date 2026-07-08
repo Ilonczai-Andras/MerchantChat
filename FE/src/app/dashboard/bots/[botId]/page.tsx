@@ -1,0 +1,272 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card } from "@/components/ui/card";
+import { getBot, updateBot, deleteBot } from "@/app/actions/bot";
+
+interface Bot {
+  id: string;
+  name: string;
+  color_hex: string;
+  welcome_message: string;
+  created_at: string;
+  user_id: string;
+}
+
+export default function BotSettingsPage() {
+  const params = useParams();
+  const router = useRouter();
+  const botId = params.botId as string;
+
+  const [bot, setBot] = useState<Bot | null>(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    colorHex: "",
+    welcomeMessage: "",
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  useEffect(() => {
+    const loadBot = async () => {
+      try {
+        const result = await getBot(botId);
+
+        if (result.success && result.bot) {
+          setBot(result.bot);
+          setFormData({
+            name: result.bot.name,
+            colorHex: result.bot.color_hex,
+            welcomeMessage: result.bot.welcome_message,
+          });
+        } else {
+          setError(result.error || "Chatbot nem található");
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Unknown error");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadBot();
+  }, [botId]);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSaving(true);
+    setError("");
+    setSuccess("");
+
+    try {
+      const result = await updateBot({
+        botId,
+        name: formData.name,
+        colorHex: formData.colorHex,
+        welcomeMessage: formData.welcomeMessage,
+      });
+
+      if (result.success) {
+        setSuccess("Beállítások sikeresen mentve");
+        setBot(result.bot);
+      } else {
+        setError(result.error);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unknown error");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm("Biztosan törölni szeretnéd ezt a chatbotot?")) {
+      return;
+    }
+
+    setIsDeleting(true);
+    setError("");
+
+    try {
+      const result = await deleteBot(botId);
+
+      if (result.success) {
+        router.push("/dashboard");
+      } else {
+        setError(result.error);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unknown error");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <div>
+        <Link href="/dashboard" className="text-blue-600 hover:underline">
+          ← Vissza az irányítópultra
+        </Link>
+        <p className="mt-4 text-gray-500">Betöltés...</p>
+      </div>
+    );
+  }
+
+  if (!bot) {
+    return (
+      <div>
+        <Link href="/dashboard" className="text-blue-600 hover:underline">
+          ← Vissza az irányítópultra
+        </Link>
+        <p className="mt-4 text-red-600">{error || "Chatbot nem található"}</p>
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      <div className="mb-8">
+        <Link href="/dashboard" className="text-blue-600 hover:underline">
+          ← Vissza az irányítópultra
+        </Link>
+        <div className="flex items-center gap-3 mt-4">
+          <div
+            className="w-8 h-8 rounded-lg"
+            style={{ backgroundColor: bot.color_hex }}
+          />
+          <h2 className="text-3xl font-bold">{bot.name} - Beállítások</h2>
+        </div>
+        <p className="text-gray-600 text-sm mt-1">
+          ID: {bot.id}
+        </p>
+      </div>
+
+      {error && (
+        <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
+          {error}
+        </div>
+      )}
+
+      {success && (
+        <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+          {success}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Main Settings */}
+        <div className="lg:col-span-2">
+          <Card className="p-8">
+            <h3 className="text-lg font-semibold mb-6">Alapvető beállítások</h3>
+            <form onSubmit={handleSave} className="space-y-6">
+              <div>
+                <label className="block text-sm font-semibold mb-2">
+                  Chatbot neve
+                </label>
+                <Input
+                  type="text"
+                  name="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  placeholder="Chatbot neve"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-2">
+                  Bot szín
+                </label>
+                <div className="flex gap-4 items-center">
+                  <input
+                    type="color"
+                    name="colorHex"
+                    value={formData.colorHex}
+                    onChange={handleChange}
+                    className="w-16 h-10 rounded cursor-pointer"
+                  />
+                  <Input
+                    type="text"
+                    name="colorHex"
+                    value={formData.colorHex}
+                    onChange={handleChange}
+                    placeholder="#3B82F6"
+                    className="flex-1"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold mb-2">
+                  Üdvözlő üzenet
+                </label>
+                <textarea
+                  name="welcomeMessage"
+                  value={formData.welcomeMessage}
+                  onChange={handleChange}
+                  placeholder="Üdvözöm! Hogyan segíthetek?"
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Az ügyfelek ezt az üzenetet látják amikor megnyitják a chatot
+                </p>
+              </div>
+
+              <Button type="submit" disabled={isSaving}>
+                {isSaving ? "Mentés..." : "Beállítások mentése"}
+              </Button>
+            </form>
+          </Card>
+        </div>
+
+        {/* Sidebar */}
+        <div className="space-y-6">
+          {/* Preview */}
+          <Card className="p-6 border-2" style={{ borderColor: bot.color_hex }}>
+            <h4 className="font-semibold mb-4">Előnézet</h4>
+            <div
+              className="rounded-lg p-4 text-white"
+              style={{ backgroundColor: bot.color_hex }}
+            >
+              <p className="text-sm font-semibold mb-2">{bot.name}</p>
+              <p className="text-sm">{formData.welcomeMessage}</p>
+            </div>
+          </Card>
+
+          {/* Delete */}
+          <Card className="p-6 border-red-200 bg-red-50">
+            <h4 className="font-semibold text-red-900 mb-2">Veszélyes zóna</h4>
+            <p className="text-xs text-red-800 mb-4">
+              A chatbot végleg törlésre kerül.
+            </p>
+            <Button
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className="w-full bg-red-600 hover:bg-red-700 text-white"
+            >
+              {isDeleting ? "Törlés..." : "Chatbot törlése"}
+            </Button>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
