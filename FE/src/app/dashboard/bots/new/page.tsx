@@ -32,26 +32,36 @@ export default function NewBotPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
     setError("");
 
+    // Validate required fields
+    if (!formData.name.trim()) {
+      setError("A chatbot neve kötelező");
+      return;
+    }
+
+    if (!formData.colorHex.trim()) {
+      setError("A szín kiválasztása kötelező");
+      return;
+    }
+
+    if (!formData.welcomeMessage.trim()) {
+      setError("Az üdvözlő üzenet kötelező");
+      return;
+    }
+
+    if (!user?.id) {
+      setError("User not authenticated");
+      return;
+    }
+
+    setIsLoading(true);
+
     try {
-      if (!formData.name.trim()) {
-        setError("A chatbot nevét meg kell adni");
-        setIsLoading(false);
-        return;
-      }
-
-      if (!user?.id) {
-        setError("User not authenticated");
-        setIsLoading(false);
-        return;
-      }
-
       const result = await createBot({
-        name: formData.name,
-        colorHex: formData.colorHex,
-        welcomeMessage: formData.welcomeMessage,
+        name: formData.name.trim(),
+        colorHex: formData.colorHex.trim(),
+        welcomeMessage: formData.welcomeMessage.trim(),
         userId: user.id,
       });
 
@@ -145,7 +155,10 @@ export default function NewBotPage() {
           </div>
 
           <div className="flex gap-4">
-            <Button type="submit" disabled={isLoading}>
+            <Button 
+              type="submit" 
+              disabled={isLoading || !formData.name.trim() || !formData.colorHex.trim() || !formData.welcomeMessage.trim()}
+            >
               {isLoading ? "Létrehozás..." : "Chatbot létrehozása"}
             </Button>
             <Link href="/dashboard">

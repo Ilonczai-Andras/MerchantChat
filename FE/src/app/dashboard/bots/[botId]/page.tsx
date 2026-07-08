@@ -71,16 +71,33 @@ export default function BotSettingsPage() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSaving(true);
     setError("");
     setSuccess("");
+
+    // Validate required fields
+    if (!formData.name.trim()) {
+      setError("A chatbot neve kötelező");
+      return;
+    }
+
+    if (!formData.colorHex.trim()) {
+      setError("A szín kiválasztása kötelező");
+      return;
+    }
+
+    if (!formData.welcomeMessage.trim()) {
+      setError("Az üdvözlő üzenet megadása kötelező");
+      return;
+    }
+
+    setIsSaving(true);
 
     try {
       const result = await updateBot({
         botId,
-        name: formData.name,
-        colorHex: formData.colorHex,
-        welcomeMessage: formData.welcomeMessage,
+        name: formData.name.trim(),
+        colorHex: formData.colorHex.trim(),
+        welcomeMessage: formData.welcomeMessage.trim(),
       });
 
       if (result.success) {
@@ -230,7 +247,10 @@ export default function BotSettingsPage() {
                 </p>
               </div>
 
-              <Button type="submit" disabled={isSaving}>
+              <Button 
+                type="submit" 
+                disabled={isSaving || !formData.name.trim() || !formData.colorHex.trim() || !formData.welcomeMessage.trim()}
+              >
                 {isSaving ? "Mentés..." : "Beállítások mentése"}
               </Button>
             </form>
