@@ -94,23 +94,40 @@ export async function POST(req: Request) {
     }
 
     // Analytics bejelentkezés
-    const { error: analyticsError } = await supabase
+    const { data: analyticsData, error: analyticsError } = await supabase
       .from('analytics')
       .insert({
         chatbot_id: chatbotId,
+        session_id: finalSessionId,
         user_question: userMessage,
         bot_response: botReply,
         response_time_ms: responseTime,
         created_at: new Date().toISOString(),
-      });
+      })
+      .select('id');
 
     if (analyticsError) {
       console.error('Analytics error:', analyticsError);
     }
 
-    return NextResponse.json({ reply: botReply });
-  } catch (error) {
+    const analyticsId = analyticsData?.[0]?.id || null;
+
+    return NextResponse.json({ reply: botReply, analyticsId });
+  } catch (error: any) {
     console.error(error);
+    
+    // Gemini API quota exceeded (429)
+    if (error?.status === 429) {
+      const retryAfter = error?.errorDetails?.[2]?.retryDelay || '10 másodperc';
+      return NextResponse.json(
+        { 
+          error: `API limit elérve. Kérjük, próbáld újra ${retryAfter} múlva!`,
+          retryAfter: retryAfter
+        }, 
+        { status: 429 }
+      );
+    }
+    
     return NextResponse.json({ error: 'Hiba a feldolgozás során' }, { status: 500 });
   }
 }

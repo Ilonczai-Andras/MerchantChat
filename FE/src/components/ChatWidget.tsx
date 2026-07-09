@@ -10,6 +10,8 @@ interface Message {
   role: "user" | "bot";
   content: string;
   timestamp: Date;
+  rating?: number; // -1: down, 0: none, 1: up
+  analyticsId?: string; // Analytics rekord ID
 }
 
 interface ChatWidgetProps {
@@ -30,7 +32,9 @@ export default function ChatWidget({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [sessionId, setSessionId] = useState<string>("");
+  const [ratingInProgress, setRatingInProgress] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const prevMessageCountRef = useRef<number>(0);
 
   // Inicializálni a sessionId-t és betölteni az előzményeket
   useEffect(() => {
@@ -62,6 +66,7 @@ export default function ChatWidget({
               role: "bot" as const,
               content: log.bot_response,
               timestamp: new Date(log.created_at),
+              analyticsId: log.analytics_id,
             },
           ]).flat();
           setMessages(historicalMessages);
@@ -74,9 +79,13 @@ export default function ChatWidget({
     initSession();
   }, [botId]);
 
-  // Auto-scroll to bottom
+  // Auto-scroll to bottom - csak új üzenetek esetén
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const currentCount = messages.length;
+    if (currentCount > prevMessageCountRef.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+    prevMessageCountRef.current = currentCount;
   }, [messages]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
@@ -112,6 +121,9 @@ export default function ChatWidget({
 
       if (!response.ok) {
         const errorData = await response.json();
+        if (response.status === 429) {
+          throw new Error(`⏳ ${errorData.error}`);
+        }
         throw new Error(errorData.error || "Chat hiba");
       }
 
@@ -123,6 +135,7 @@ export default function ChatWidget({
         role: "bot",
         content: data.reply,
         timestamp: new Date(),
+        analyticsId: data.analyticsId,
       };
 
       setMessages((prev) => [...prev, botMessage]);
@@ -131,6 +144,36 @@ export default function ChatWidget({
       console.error("Chat error:", err);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleRating = async (messageId: string, analyticsId: string | undefined, rating: number) => {
+    setRatingInProgress(true);
+    try {
+      const response = await fetch('/api/analytics', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          chatbotId: botId,
+          userRating: rating,
+          analyticsId,
+        }),
+      });
+
+      if (response.ok) {
+        // Frissítjük az üzenetet rating-gel
+        setMessages((prev) =>
+          prev.map((msg) =>
+            msg.id === messageId ? { ...msg, rating } : msg
+          )
+        );
+      }
+    } catch (err) {
+      console.error('Rating error:', err);
+    } finally {
+      setRatingInProgress(false);
     }
   };
 
@@ -159,33 +202,63 @@ export default function ChatWidget({
           </div>
         ) : (
           <>
-            {messages.map((msg) => (
+            {messages.map((msg, idx) => (
               <div
                 key={msg.id}
                 className={`flex ${
                   msg.role === "user" ? "justify-end" : "justify-start"
                 }`}
               >
-                <div
-                  className={`max-w-xs px-4 py-2 rounded-lg ${
-                    msg.role === "user"
-                      ? "bg-blue-600 text-white rounded-br-none"
-                      : "bg-gray-200 text-gray-800 rounded-bl-none"
-                  }`}
-                >
-                  <p className="text-sm break-words">{msg.content}</p>
-                  <p
-                    className={`text-xs mt-1 ${
+                <div>
+                  <div
+                    className={`max-w-xs px-4 py-2 rounded-lg ${
                       msg.role === "user"
-                        ? "text-blue-100"
-                        : "text-gray-500"
+                        ? "bg-blue-600 text-white rounded-br-none"
+                        : "bg-gray-200 text-gray-800 rounded-bl-none"
                     }`}
                   >
-                    {msg.timestamp.toLocaleTimeString("hu-HU", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </p>
+                    <p className="text-sm break-words">{msg.content}</p>
+                    <p
+                      className={`text-xs mt-1 ${
+                        msg.role === "user"
+                          ? "text-blue-100"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      {msg.timestamp.toLocaleTimeString("hu-HU", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  </div>
+
+                  {/* Rating Buttons - csak bot üzenetekhez */}
+                  {msg.role === "bot" && (
+                    <div className="flex gap-2 mt-2 ml-1">
+                      <button
+                        onClick={() => handleRating(msg.id, msg.analyticsId, 1)}
+                        disabled={ratingInProgress || msg.rating !== undefined}
+                        className={`px-2 py-1 rounded text-xs font-semibold transition ${
+                          msg.rating === 1
+                            ? "bg-green-500 text-white"
+                            : "bg-gray-200 text-gray-700 hover:bg-green-200 disabled:opacity-50"
+                        }`}
+                      >
+                        👍
+                      </button>
+                      <button
+                        onClick={() => handleRating(msg.id, msg.analyticsId, -1)}
+                        disabled={ratingInProgress || msg.rating !== undefined}
+                        className={`px-2 py-1 rounded text-xs font-semibold transition ${
+                          msg.rating === -1
+                            ? "bg-red-500 text-white"
+                            : "bg-gray-200 text-gray-700 hover:bg-red-200 disabled:opacity-50"
+                        }`}
+                      >
+                        👎
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

@@ -86,29 +86,34 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const { chatbotId, userRating } = await req.json();
+    const { chatbotId, userRating, analyticsId } = await req.json();
 
     if (!chatbotId || userRating === undefined) {
       return NextResponse.json({ error: 'chatbotId és userRating szükséges' }, { status: 400 });
     }
 
-    // Legutolsó analytics rekordot frissítjük rating-gel
-    const { data: lastAnalytics, error: fetchError } = await supabase
-      .from('analytics')
-      .select('id')
-      .eq('chatbot_id', chatbotId)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
+    // Az analyticsId-t használjuk, vagy a legutolsó rekordat
+    let recordId = analyticsId;
+    if (!recordId) {
+      const { data: lastAnalytics, error: fetchError } = await supabase
+        .from('analytics')
+        .select('id')
+        .eq('chatbot_id', chatbotId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
 
-    if (fetchError || !lastAnalytics) {
-      return NextResponse.json({ error: 'Nincs analytics adat' }, { status: 404 });
+      if (fetchError || !lastAnalytics) {
+        return NextResponse.json({ error: 'Nincs analytics adat' }, { status: 404 });
+      }
+
+      recordId = lastAnalytics.id;
     }
 
     const { error: updateError } = await supabase
       .from('analytics')
       .update({ user_rating: userRating })
-      .eq('id', lastAnalytics.id);
+      .eq('id', recordId);
 
     if (updateError) throw updateError;
 

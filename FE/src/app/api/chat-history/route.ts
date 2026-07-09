@@ -13,16 +13,33 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'sessionId és botId szükséges' }, { status: 400 });
     }
 
-    const { data, error } = await supabase
+    // Chat logs lekérdezése
+    const { data: logs, error: logsError } = await supabase
       .from('chat_logs')
       .select('*')
       .eq('session_id', sessionId)
       .eq('chatbot_id', botId)
       .order('created_at', { ascending: true });
 
-    if (error) throw error;
+    if (logsError) throw logsError;
 
-    return NextResponse.json({ logs: data || [] });
+    // Analytics ID-k lekérdezése ugyanerre a session-re
+    const { data: analyticsData, error: analyticsError } = await supabase
+      .from('analytics')
+      .select('id, user_question, created_at')
+      .eq('session_id', sessionId)
+      .eq('chatbot_id', botId)
+      .order('created_at', { ascending: true });
+
+    if (analyticsError) throw analyticsError;
+
+    // Analytics ID-k hozzáadása a logok-hoz (időbeli sorrend alapján)
+    const enrichedLogs = logs?.map((log, idx) => ({
+      ...log,
+      analytics_id: analyticsData?.[idx]?.id || null
+    })) || [];
+
+    return NextResponse.json({ logs: enrichedLogs });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: 'Hiba a lekérés során' }, { status: 500 });
