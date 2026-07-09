@@ -49,19 +49,19 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
             href="/dashboard"
             className="block px-4 py-3 rounded-lg hover:bg-blue-50 font-medium text-gray-700 hover:text-blue-600 transition"
           >
-            Irányítópult
+            📊 Irányítópult
           </Link>
           <Link
             href="/dashboard/bots"
             className="block px-4 py-3 rounded-lg hover:bg-blue-50 font-medium text-gray-700 hover:text-blue-600 transition"
           >
-            Chatbotok
+            🤖 Chatbotok
           </Link>
           <Link
             href="/dashboard/settings"
             className="block px-4 py-3 rounded-lg hover:bg-blue-50 font-medium text-gray-700 hover:text-blue-600 transition"
           >
-            Beállítások
+            ⚙️ Beállítások
           </Link>
         </nav>
 

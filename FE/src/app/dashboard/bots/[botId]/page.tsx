@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
+import { EmbedIntegration } from "@/components/EmbedIntegration";
 import { getBot, updateBot, deleteBot } from "@/app/actions/bot";
 
 interface Bot {
@@ -415,6 +416,11 @@ export default function BotSettingsPage() {
             </Button>
           </Card>
         </div>
+      </div>
+
+      {/* Embed Integration Section */}
+      <div className="mt-12">
+        <EmbedIntegration botId={botId} botName={bot?.name || "Chatbot"} />
       </div>
     </div>
   );
