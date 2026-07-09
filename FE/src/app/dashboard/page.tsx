@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { AnalyticsDashboard } from "@/components/AnalyticsDashboard";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/app/context/auth";
 import { getUserBots } from "@/app/actions/bot";
@@ -144,6 +145,14 @@ export default function DashboardPage() {
             <p className="text-gray-600 text-sm">Felhasználók</p>
             <p className="text-3xl font-bold mt-2">0</p>
           </Card>
+        </div>
+      )}
+
+      {/* Analytics Dashboard */}
+      {!error && bots.length > 0 && (
+        <div className="mt-12">
+          <h2 className="text-2xl font-bold mb-6">📊 Statisztikák - {bots[0].name}</h2>
+          <AnalyticsDashboard botId={bots[0].id} />
         </div>
       )}
     </div>

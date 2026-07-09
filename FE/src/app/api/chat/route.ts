@@ -17,6 +17,8 @@ async function getEmbedding(text: string): Promise<number[]> {
 }
 
 export async function POST(req: Request) {
+  const startTime = Date.now(); // Válaszidő méréshez
+  
   try {
     const { chatbotId, userMessage, sessionId } = await req.json();
 
@@ -73,6 +75,7 @@ export async function POST(req: Request) {
     });
 
     const botReply = chatResponse.response.text();
+    const responseTime = Date.now() - startTime;
 
     // Mentjük a beszélgetést
     const finalSessionId = sessionId || `session_${Date.now()}`;
@@ -88,7 +91,21 @@ export async function POST(req: Request) {
 
     if (logError) {
       console.error('Chat log error:', logError);
-      // Nem szakítjuk meg a folyamatot, csak logolunk
+    }
+
+    // Analytics bejelentkezés
+    const { error: analyticsError } = await supabase
+      .from('analytics')
+      .insert({
+        chatbot_id: chatbotId,
+        user_question: userMessage,
+        bot_response: botReply,
+        response_time_ms: responseTime,
+        created_at: new Date().toISOString(),
+      });
+
+    if (analyticsError) {
+      console.error('Analytics error:', analyticsError);
     }
 
     return NextResponse.json({ reply: botReply });
