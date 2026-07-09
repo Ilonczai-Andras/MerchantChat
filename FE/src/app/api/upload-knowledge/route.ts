@@ -20,6 +20,14 @@ export async function POST(req: Request) {
   try {
     const { chatbotId, textContent } = await req.json();
 
+    // 0. Töröljük az előző tudásbázist
+    const { error: deleteError } = await supabase
+      .from('knowledge_base')
+      .delete()
+      .eq('chatbot_id', chatbotId);
+
+    if (deleteError) throw deleteError;
+
     // 1. Szöveg egyszerű darabolása
     const chunks = textContent.match(/[\s\S]{1,1000}/g) || [];
 
@@ -40,5 +48,32 @@ export async function POST(req: Request) {
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: 'Hiba a feldolgozás során' }, { status: 500 });
+  }
+}
+
+export async function GET(req: Request) {
+  try {
+    const url = new URL(req.url);
+    const chatbotId = url.searchParams.get('chatbotId');
+
+    if (!chatbotId) {
+      return NextResponse.json({ error: 'chatbotId szükséges' }, { status: 400 });
+    }
+
+    const { data, error } = await supabase
+      .from('knowledge_base')
+      .select('content')
+      .eq('chatbot_id', chatbotId)
+      .order('id', { ascending: true });
+
+    if (error) throw error;
+
+    // Összeillesztjük az összes szöveget
+    const fullText = data?.map((item: any) => item.content).join('\n\n') || '';
+
+    return NextResponse.json({ success: true, content: fullText });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: 'Hiba a lekérés során' }, { status: 500 });
   }
 }

@@ -48,6 +48,17 @@ export default function BotSettingsPage() {
             colorHex: result.bot.color_hex,
             welcomeMessage: result.bot.welcome_message,
           });
+
+          // Betöltjük az előző tudásbázist
+          const knowledgeRes = await fetch(
+            `/api/upload-knowledge?chatbotId=${botId}`
+          );
+          if (knowledgeRes.ok) {
+            const knowledgeData = await knowledgeRes.json();
+            if (knowledgeData.content) {
+              setKnowledgeText(knowledgeData.content);
+            }
+          }
         } else {
           setError(result.error || "Chatbot nem található");
         }
@@ -169,7 +180,17 @@ export default function BotSettingsPage() {
 
       const data = await response.json();
       setSuccess("Tudásbázis sikeresen feltöltve és vektorizálva!");
-      setKnowledgeText("");
+      
+      // Betöltjük az új szöveget
+      const knowledgeRes = await fetch(
+        `/api/upload-knowledge?chatbotId=${botId}`
+      );
+      if (knowledgeRes.ok) {
+        const knowledgeData = await knowledgeRes.json();
+        if (knowledgeData.content) {
+          setKnowledgeText(knowledgeData.content);
+        }
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Ismeretlen hiba");
     } finally {
@@ -299,21 +320,33 @@ export default function BotSettingsPage() {
 
           {/* Knowledge Base */}
           <Card className="p-8">
-            <h3 className="text-lg font-semibold mb-6">Tudásbázis feltöltés</h3>
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-lg font-semibold">📚 Tudásbázis szerkesztése</h3>
+                <p className="text-xs text-gray-600 mt-1">
+                  {knowledgeText.trim() ? "Módosítsd az alábbi szöveget, majd kattints a Mentésre" : "Másold be a szöveget, amit a chatbot alapul vesz"}
+                </p>
+              </div>
+            </div>
             <form onSubmit={handleUploadKnowledge} className="space-y-6">
               <div>
-                <label className="block text-sm font-semibold mb-2">
-                  Tudásbázis szövege
+                <label className="block text-sm font-semibold mb-2 flex items-center gap-2">
+                  <span>Tudásbázis szövege</span>
+                  {knowledgeText.trim() && (
+                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                      ✓ Szöveg mentve
+                    </span>
+                  )}
                 </label>
                 <textarea
                   value={knowledgeText}
                   onChange={(e) => setKnowledgeText(e.target.value)}
-                  placeholder="Másold be a szöveget pl. GYIK, szállítási feltételek, stb..."
+                  placeholder="Másold be az új szöveget (GYIK, szállítási feltételek, stb.) vagy szerkeszd az előzőt..."
                   rows={8}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  Ez a szöveg lesz a chatbot tudásbázisa. A chatbot ezek alapján válaszol majd az ügyfelek kérdéseire.
+                  💡 Az új szöveg felülírja az előzőt. A szöveg 1000 karakteres blokkokra lesz darabolva és vektorizálva.
                 </p>
               </div>
 
@@ -321,7 +354,7 @@ export default function BotSettingsPage() {
                 type="submit" 
                 disabled={isUploadingKnowledge || !knowledgeText.trim()}
               >
-                {isUploadingKnowledge ? "Feltöltés..." : "Tudásbázis feltöltése"}
+                {isUploadingKnowledge ? "Mentés..." : "🚀 Tudásbázis Mentése"}
               </Button>
             </form>
           </Card>
