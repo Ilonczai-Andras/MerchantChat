@@ -375,6 +375,19 @@ export default function BotSettingsPage() {
             </Link>
           </Card>
 
+          {/* Chat Logs */}
+          <Card className="p-6 border-purple-200 bg-purple-50">
+            <h4 className="font-semibold text-purple-900 mb-2">💬 Beszélgetés Előzmények</h4>
+            <p className="text-xs text-purple-800 mb-4">
+              Nézd meg az összes ügyfél-chatbot beszélgetést.
+            </p>
+            <Link href={`/dashboard/bots/${botId}/logs`}>
+              <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white">
+                Előzmények Megtekintése
+              </Button>
+            </Link>
+          </Card>
+
           {/* Preview */}
           <Card className="p-6 border-2" style={{ borderColor: bot.color_hex }}>
             <h4 className="font-semibold mb-4">Előnézet</h4>

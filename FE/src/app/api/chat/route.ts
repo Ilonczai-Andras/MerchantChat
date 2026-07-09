@@ -74,7 +74,22 @@ export async function POST(req: Request) {
 
     const botReply = chatResponse.response.text();
 
-    // (Opcionális ezen a ponton: elmenteni a chat_logs táblába a kérdést és a választ)
+    // Mentjük a beszélgetést
+    const sessionId = `session_${Date.now()}`;
+    const { error: logError } = await supabase
+      .from('chat_logs')
+      .insert({
+        chatbot_id: chatbotId,
+        session_id: sessionId,
+        user_message: userMessage,
+        bot_response: botReply,
+        created_at: new Date().toISOString(),
+      });
+
+    if (logError) {
+      console.error('Chat log error:', logError);
+      // Nem szakítjuk meg a folyamatot, csak logolunk
+    }
 
     return NextResponse.json({ reply: botReply });
   } catch (error) {

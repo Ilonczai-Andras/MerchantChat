@@ -116,6 +116,19 @@ export default function ChatTestPage() {
                 💡 <strong>Tipp:</strong> Teszteld a chatot az itt feltöltött tudásbázis alapján! Ha nem működik, győződj meg róla, hogy van-e tudásbázis feltöltve az előző lapon.
               </p>
             </div>
+
+            <div className="mt-6 space-y-2">
+              <Link href={`/dashboard/bots/${botId}`}>
+                <button className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition text-sm">
+                  ⚙️ Beállítások
+                </button>
+              </Link>
+              <Link href={`/dashboard/bots/${botId}/logs`}>
+                <button className="w-full bg-purple-500 text-white py-2 rounded hover:bg-purple-600 transition text-sm">
+                  💬 Beszélgetés Előzmények
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
       </div>
