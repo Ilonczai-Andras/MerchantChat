@@ -28,9 +28,11 @@ export default function BotSettingsPage() {
     colorHex: "",
     welcomeMessage: "",
   });
+  const [knowledgeText, setKnowledgeText] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isUploadingKnowledge, setIsUploadingKnowledge] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -133,6 +135,45 @@ export default function BotSettingsPage() {
       setError(err instanceof Error ? err.message : "Unknown error");
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleUploadKnowledge = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    if (!knowledgeText.trim()) {
+      setError("Kérjük, írj be szöveget a feltöltéshez");
+      return;
+    }
+
+    setIsUploadingKnowledge(true);
+
+    try {
+      const response = await fetch("/api/upload-knowledge", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          chatbotId: botId,
+          textContent: knowledgeText,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Feltöltés sikertelen");
+      }
+
+      const data = await response.json();
+      setSuccess("Tudásbázis sikeresen feltöltve és vektorizálva!");
+      setKnowledgeText("");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Ismeretlen hiba");
+    } finally {
+      setIsUploadingKnowledge(false);
     }
   };
 
@@ -255,10 +296,52 @@ export default function BotSettingsPage() {
               </Button>
             </form>
           </Card>
+
+          {/* Knowledge Base */}
+          <Card className="p-8">
+            <h3 className="text-lg font-semibold mb-6">Tudásbázis feltöltés</h3>
+            <form onSubmit={handleUploadKnowledge} className="space-y-6">
+              <div>
+                <label className="block text-sm font-semibold mb-2">
+                  Tudásbázis szövege
+                </label>
+                <textarea
+                  value={knowledgeText}
+                  onChange={(e) => setKnowledgeText(e.target.value)}
+                  placeholder="Másold be a szöveget pl. GYIK, szállítási feltételek, stb..."
+                  rows={8}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Ez a szöveg lesz a chatbot tudásbázisa. A chatbot ezek alapján válaszol majd az ügyfelek kérdéseire.
+                </p>
+              </div>
+
+              <Button 
+                type="submit" 
+                disabled={isUploadingKnowledge || !knowledgeText.trim()}
+              >
+                {isUploadingKnowledge ? "Feltöltés..." : "Tudásbázis feltöltése"}
+              </Button>
+            </form>
+          </Card>
         </div>
 
         {/* Sidebar */}
         <div className="space-y-6">
+          {/* Chat Test */}
+          <Card className="p-6 border-green-200 bg-green-50">
+            <h4 className="font-semibold text-green-900 mb-2">💬 Chat Teszt</h4>
+            <p className="text-xs text-green-800 mb-4">
+              Teszteld a chatbot működését a valós tudásbázis alapján.
+            </p>
+            <Link href={`/dashboard/bots/${botId}/chat`}>
+              <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
+                Chat Megnyitása
+              </Button>
+            </Link>
+          </Card>
+
           {/* Preview */}
           <Card className="p-6 border-2" style={{ borderColor: bot.color_hex }}>
             <h4 className="font-semibold mb-4">Előnézet</h4>
