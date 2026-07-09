@@ -18,7 +18,7 @@ async function getEmbedding(text: string): Promise<number[]> {
 
 export async function POST(req: Request) {
   try {
-    const { chatbotId, userMessage } = await req.json();
+    const { chatbotId, userMessage, sessionId } = await req.json();
 
     // 1. A vásárló kérdésének vektorizálása
     const queryEmbedding = await getEmbedding(userMessage);
@@ -75,12 +75,12 @@ export async function POST(req: Request) {
     const botReply = chatResponse.response.text();
 
     // Mentjük a beszélgetést
-    const sessionId = `session_${Date.now()}`;
+    const finalSessionId = sessionId || `session_${Date.now()}`;
     const { error: logError } = await supabase
       .from('chat_logs')
       .insert({
         chatbot_id: chatbotId,
-        session_id: sessionId,
+        session_id: finalSessionId,
         user_message: userMessage,
         bot_response: botReply,
         created_at: new Date().toISOString(),

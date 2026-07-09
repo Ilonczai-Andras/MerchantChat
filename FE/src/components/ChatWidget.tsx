@@ -29,7 +29,50 @@ export default function ChatWidget({
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [sessionId, setSessionId] = useState<string>("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Inicializálni a sessionId-t és betölteni az előzményeket
+  useEffect(() => {
+    const initSession = async () => {
+      // Leszedni vagy generálni a sessionId-t
+      let sid = typeof window !== "undefined" ? localStorage.getItem(`chat_session_${botId}`) : null;
+      if (!sid) {
+        sid = `session_${botId}_${Date.now()}`;
+        if (typeof window !== "undefined") {
+          localStorage.setItem(`chat_session_${botId}`, sid);
+        }
+      }
+      setSessionId(sid);
+
+      // Betölteni az előzményeket
+      try {
+        const response = await fetch(`/api/chat-history?sessionId=${sid}&botId=${botId}`);
+        if (response.ok) {
+          const data = await response.json();
+          const historicalMessages: Message[] = (data.logs || []).map((log: any) => [
+            {
+              id: `${log.id}_user`,
+              role: "user" as const,
+              content: log.user_message,
+              timestamp: new Date(log.created_at),
+            },
+            {
+              id: `${log.id}_bot`,
+              role: "bot" as const,
+              content: log.bot_response,
+              timestamp: new Date(log.created_at),
+            },
+          ]).flat();
+          setMessages(historicalMessages);
+        }
+      } catch (err) {
+        console.error("Előzmények betöltésének hiba:", err);
+      }
+    };
+
+    initSession();
+  }, [botId]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -63,6 +106,7 @@ export default function ChatWidget({
         body: JSON.stringify({
           chatbotId: botId,
           userMessage: inputValue,
+          sessionId: sessionId,
         }),
       });
 
