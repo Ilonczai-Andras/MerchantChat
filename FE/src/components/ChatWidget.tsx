@@ -67,6 +67,7 @@ export default function ChatWidget({
               content: log.bot_response,
               timestamp: new Date(log.created_at),
               analyticsId: log.analytics_id,
+              rating: log.analytics_rating || undefined,
             },
           ]).flat();
           setMessages(historicalMessages);

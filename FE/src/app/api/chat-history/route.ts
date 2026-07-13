@@ -23,20 +23,21 @@ export async function GET(req: Request) {
 
     if (logsError) throw logsError;
 
-    // Analytics ID-k lekérdezése ugyanerre a session-re
+    // Analytics ID-k és ratings lekérdezése ugyanerre a session-re
     const { data: analyticsData, error: analyticsError } = await supabase
       .from('analytics')
-      .select('id, user_question, created_at')
+      .select('id, user_question, user_rating, created_at')
       .eq('session_id', sessionId)
       .eq('chatbot_id', botId)
       .order('created_at', { ascending: true });
 
     if (analyticsError) throw analyticsError;
 
-    // Analytics ID-k hozzáadása a logok-hoz (időbeli sorrend alapján)
+    // Analytics ID-k és ratings hozzáadása a logok-hoz (időbeli sorrend alapján)
     const enrichedLogs = logs?.map((log, idx) => ({
       ...log,
-      analytics_id: analyticsData?.[idx]?.id || null
+      analytics_id: analyticsData?.[idx]?.id || null,
+      analytics_rating: analyticsData?.[idx]?.user_rating || null
     })) || [];
 
     return NextResponse.json({ logs: enrichedLogs });
