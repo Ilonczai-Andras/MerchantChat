@@ -106,23 +106,27 @@ export function AnalyticsDashboard({ botId }: { botId: string }) {
       {/* Hourly Chart */}
       <Card className="p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">📊 Csúcsidők (Óránkénti)</h3>
-        <div className="flex items-end justify-between gap-1 h-32 bg-gray-50 p-3 rounded">
-          {stats.hourlyData.map((item) => {
-            const maxCount = Math.max(...stats.hourlyData.map(h => h.count));
-            const height = maxCount > 0 ? (item.count / maxCount) * 100 : 0;
-            return (
-              <div key={item.hour} className="flex flex-col items-center flex-1">
-                <div
-                  className="w-full bg-blue-500 rounded-t hover:bg-blue-600 transition"
-                  style={{ height: `${Math.max(height, 5)}%`, minHeight: '4px' }}
-                  title={`${item.hour}:00 - ${item.count} kérdés`}
-                ></div>
-                <p className="text-xs text-gray-600 mt-2">{item.hour}</p>
-              </div>
-            );
-          })}
-        </div>
-        <p className="text-xs text-gray-500 mt-2 text-center">Óra</p>
+        {stats.hourlyData && stats.hourlyData.length > 0 ? (
+          <div className="flex items-end justify-between gap-1 h-32 bg-gray-50 p-3 rounded">
+            {stats.hourlyData.map((item) => {
+              const maxCount = Math.max(...stats.hourlyData.map(h => h.count));
+              const height = maxCount > 0 ? (item.count / maxCount) * 100 : 5;
+              return (
+                <div key={item.hour} className="flex flex-col items-center flex-1 gap-1">
+                  <div
+                    className={`w-full ${item.count > 0 ? 'bg-blue-500 hover:bg-blue-600' : 'bg-gray-300'} rounded-t transition`}
+                    style={{ height: `${Math.max(height, 5)}%`, minHeight: '4px' }}
+                    title={`${item.hour}:00 - ${item.count} kérdés`}
+                  ></div>
+                  <p className="text-xs text-gray-600">{item.hour}</p>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <p className="text-gray-500 text-sm">Nincsenek adatok az órákról</p>
+        )}
+        <p className="text-xs text-gray-500 mt-2 text-center">Óra (0-23)</p>
       </Card>
 
       {/* Info Box */}

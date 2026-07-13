@@ -51,10 +51,12 @@ export async function GET(req: Request) {
       ? Math.round((upvotes / ratings.length) * 100)
       : 0;
 
-    // Óránkénti statisztikák (csúcsidők)
+    // Óránkénti statisztikák (csúcsidők) - lokális időzóna alapján
     const hourlyStats: Record<number, number> = {};
     allAnalytics?.forEach(a => {
-      const hour = new Date(a.created_at).getHours();
+      // Lokális időzónában számol
+      const date = new Date(a.created_at);
+      const hour = date.getHours();
       hourlyStats[hour] = (hourlyStats[hour] || 0) + 1;
     });
 
@@ -62,6 +64,9 @@ export async function GET(req: Request) {
       hour: i,
       count: hourlyStats[i] || 0
     }));
+
+    console.log('DEBUG - hourlyStats:', hourlyStats);
+    console.log('DEBUG - allAnalytics count:', allAnalytics?.length);
 
     return NextResponse.json({
       success: true,
