@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { EmbedIntegration } from "@/components/EmbedIntegration";
+import FileUploader from "@/components/FileUploader";
 import { getBot, updateBot, deleteBot } from "@/app/actions/bot";
 
 interface Bot {
@@ -323,41 +324,54 @@ export default function BotSettingsPage() {
           <Card className="p-8">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h3 className="text-lg font-semibold">📚 Tudásbázis szerkesztése</h3>
+                <h3 className="text-lg font-semibold">📚 Tudásbázis</h3>
                 <p className="text-xs text-gray-600 mt-1">
-                  {knowledgeText.trim() ? "Módosítsd az alábbi szöveget, majd kattints a Mentésre" : "Másold be a szöveget, amit a chatbot alapul vesz"}
+                  Töltsd fel fájlokat vagy másold be szövegesen
                 </p>
               </div>
             </div>
-            <form onSubmit={handleUploadKnowledge} className="space-y-6">
-              <div>
-                <label className="block text-sm font-semibold mb-2 flex items-center gap-2">
-                  <span>Tudásbázis szövege</span>
-                  {knowledgeText.trim() && (
-                    <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
-                      ✓ Szöveg mentve
-                    </span>
-                  )}
-                </label>
-                <textarea
-                  value={knowledgeText}
-                  onChange={(e) => setKnowledgeText(e.target.value)}
-                  placeholder="Másold be az új szöveget (GYIK, szállítási feltételek, stb.) vagy szerkeszd az előzőt..."
-                  rows={8}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  💡 Az új szöveg felülírja az előzőt. A szöveg 1000 karakteres blokkokra lesz darabolva és vektorizálva.
-                </p>
-              </div>
 
-              <Button 
-                type="submit" 
-                disabled={isUploadingKnowledge || !knowledgeText.trim()}
-              >
-                {isUploadingKnowledge ? "Mentés..." : "🚀 Tudásbázis Mentése"}
-              </Button>
-            </form>
+            {/* File Uploader */}
+            <div className="mb-8">
+              <FileUploader botId={botId} onUploadSuccess={() => {
+                setSuccess("Fájlok feldolgozva!");
+                setTimeout(() => setSuccess(""), 3000);
+              }} />
+            </div>
+
+            {/* Text Editor */}
+            <div className="border-t pt-8">
+              <h4 className="font-semibold mb-4">Vagy szerkeszd szövegesen</h4>
+              <form onSubmit={handleUploadKnowledge} className="space-y-6">
+                <div>
+                  <label className="block text-sm font-semibold mb-2 flex items-center gap-2">
+                    <span>Tudásbázis szövege</span>
+                    {knowledgeText.trim() && (
+                      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                        ✓ Szöveg mentve
+                      </span>
+                    )}
+                  </label>
+                  <textarea
+                    value={knowledgeText}
+                    onChange={(e) => setKnowledgeText(e.target.value)}
+                    placeholder="Másold be az új szöveget (GYIK, szállítási feltételek, stb.) vagy szerkeszd az előzőt..."
+                    rows={8}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    💡 Az új szöveg felülírja az előzőt. A szöveg 1000 karakteres blokkokra lesz darabolva és vektorizálva.
+                  </p>
+                </div>
+
+                <Button 
+                  type="submit" 
+                  disabled={isUploadingKnowledge || !knowledgeText.trim()}
+                >
+                  {isUploadingKnowledge ? "Mentés..." : "🚀 Tudásbázis Mentése"}
+                </Button>
+              </form>
+            </div>
           </Card>
         </div>
 
