@@ -20,14 +20,6 @@ export async function POST(req: Request) {
   try {
     const { chatbotId, textContent } = await req.json();
 
-    // 0. Töröljük az előző tudásbázist
-    const { error: deleteError } = await supabase
-      .from('knowledge_base')
-      .delete()
-      .eq('chatbot_id', chatbotId);
-
-    if (deleteError) throw deleteError;
-
     // 1. Szöveg egyszerű darabolása
     const chunks = textContent.match(/[\s\S]{1,1000}/g) || [];
 
@@ -44,7 +36,7 @@ export async function POST(req: Request) {
       if (error) throw error;
     }
 
-    return NextResponse.json({ success: true, message: 'Tudásbázis feldolgozva és vektorizálva!' });
+    return NextResponse.json({ success: true, message: `✅ Tudásbázis bővítve ${chunks.length} új chunk-kal!` });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: 'Hiba a feldolgozás során' }, { status: 500 });

@@ -57,7 +57,7 @@ export default function FileUploader({ botId, onUploadSuccess }: FileUploaderPro
   return (
     <div className="space-y-3 p-4 bg-gray-50 rounded-lg border border-gray-200">
       <h4 className="font-semibold text-gray-900">📁 Fájlfeltöltés</h4>
-      <p className="text-sm text-gray-600">Töltsd fel TXT vagy CSV fájlokat</p>
+      <p className="text-sm text-gray-600">Töltsd fel TXT vagy CSV fájlokat - a tartalom hozzáadódik a meglévőhöz</p>
 
       <input
         ref={fileInputRef}

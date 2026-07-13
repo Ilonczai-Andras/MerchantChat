@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { EmbedIntegration } from "@/components/EmbedIntegration";
 import FileUploader from "@/components/FileUploader";
+import ScrapeURLForm from "@/components/ScrapeURLForm";
 import { getBot, updateBot, deleteBot } from "@/app/actions/bot";
 
 interface Bot {
@@ -339,6 +340,14 @@ export default function BotSettingsPage() {
               }} />
             </div>
 
+            {/* URL Scraper */}
+            <div className="mb-8">
+              <ScrapeURLForm botId={botId} onScrapeSuccess={() => {
+                setSuccess("URL feldolgozva!");
+                setTimeout(() => setSuccess(""), 3000);
+              }} />
+            </div>
+
             {/* Text Editor */}
             <div className="border-t pt-8">
               <h4 className="font-semibold mb-4">Vagy szerkeszd szövegesen</h4>
@@ -355,12 +364,12 @@ export default function BotSettingsPage() {
                   <textarea
                     value={knowledgeText}
                     onChange={(e) => setKnowledgeText(e.target.value)}
-                    placeholder="Másold be az új szöveget (GYIK, szállítási feltételek, stb.) vagy szerkeszd az előzőt..."
+                    placeholder="Másold be az új szöveget (GYIK, szállítási feltételek, stb.) - hozzáadódik a meglévőhöz..."
                     rows={8}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
                   />
                   <p className="text-xs text-gray-500 mt-1">
-                    💡 Az új szöveg felülírja az előzőt. A szöveg 1000 karakteres blokkokra lesz darabolva és vektorizálva.
+                    💡 Az új szöveg a meglévő tudásbázishoz adódik hozzá. A szöveg 1000 karakteres blokkokra lesz darabolva és vektorizálva.
                   </p>
                 </div>
 

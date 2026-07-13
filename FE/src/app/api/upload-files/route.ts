@@ -80,12 +80,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Meglévő tudásbázis törlése
-    await supabase
-      .from('knowledge_base')
-      .delete()
-      .eq('chatbot_id', botId);
-
     // Szöveg darabolása (chunking) - 1000 karakter per chunk
     const chunks: string[] = [];
     const chunkSize = 1000;
@@ -112,7 +106,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      message: `${files.length} fájl feldolgozva, ${chunks.length} chunk-ba darabolva`,
+      message: `✅ ${files.length} fájl feldolgozva, ${chunks.length} új chunk hozzáadva`,
     });
   } catch (error) {
     console.error('Upload hiba:', error);
