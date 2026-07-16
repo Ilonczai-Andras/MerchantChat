@@ -3,9 +3,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
 import { EmbedIntegration } from "@/components/EmbedIntegration";
 import FileUploader from "@/components/FileUploader";
 import ScrapeURLForm from "@/components/ScrapeURLForm";
@@ -256,19 +253,20 @@ export default function BotSettingsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Settings */}
         <div className="lg:col-span-2">
-          <Card className="p-8">
+          <div className="ui-card p-8">
             <h3 className="text-lg font-semibold mb-6">Alapvető beállítások</h3>
             <form onSubmit={handleSave} className="space-y-6">
               <div>
                 <label className="block text-sm font-semibold mb-2">
                   Chatbot neve
                 </label>
-                <Input
+                <input
                   type="text"
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
                   placeholder="Chatbot neve"
+                  className="ui-input"
                 />
               </div>
 
@@ -284,13 +282,13 @@ export default function BotSettingsPage() {
                     onChange={handleChange}
                     className="w-16 h-10 rounded cursor-pointer"
                   />
-                  <Input
+                  <input
                     type="text"
                     name="colorHex"
                     value={formData.colorHex}
                     onChange={handleChange}
                     placeholder="#3B82F6"
-                    className="flex-1"
+                    className="ui-input flex-1"
                   />
                 </div>
               </div>
@@ -312,17 +310,18 @@ export default function BotSettingsPage() {
                 </p>
               </div>
 
-              <Button 
+              <button 
                 type="submit" 
                 disabled={isSaving || !formData.name.trim() || !formData.colorHex.trim() || !formData.welcomeMessage.trim()}
+                className="ui-button ui-button-default ui-button-size-default"
               >
                 {isSaving ? "Mentés..." : "Beállítások mentése"}
-              </Button>
+              </button>
             </form>
-          </Card>
+          </div>
 
           {/* Knowledge Base */}
-          <Card className="p-8">
+          <div className="ui-card p-8">
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h3 className="text-lg font-semibold">📚 Tudásbázis</h3>
@@ -373,47 +372,48 @@ export default function BotSettingsPage() {
                   </p>
                 </div>
 
-                <Button 
+                <button 
                   type="submit" 
                   disabled={isUploadingKnowledge || !knowledgeText.trim()}
+                  className="ui-button ui-button-default ui-button-size-default"
                 >
                   {isUploadingKnowledge ? "Mentés..." : "🚀 Tudásbázis Mentése"}
-                </Button>
+                </button>
               </form>
             </div>
-          </Card>
+          </div>
         </div>
 
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Chat Test */}
-          <Card className="p-6 border-green-200 bg-green-50">
+          <div className="ui-card p-6 border-green-200 bg-green-50">
             <h4 className="font-semibold text-green-900 mb-2">💬 Chat Teszt</h4>
             <p className="text-xs text-green-800 mb-4">
               Teszteld a chatbot működését a valós tudásbázis alapján.
             </p>
             <Link href={`/dashboard/bots/${botId}/chat`}>
-              <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
+              <button className="ui-button ui-button-default ui-button-size-default w-full bg-green-600 hover:bg-green-700 text-white">
                 Chat Megnyitása
-              </Button>
+              </button>
             </Link>
-          </Card>
+          </div>
 
           {/* Chat Logs */}
-          <Card className="p-6 border-purple-200 bg-purple-50">
+          <div className="ui-card p-6 border-purple-200 bg-purple-50">
             <h4 className="font-semibold text-purple-900 mb-2">💬 Beszélgetés Előzmények</h4>
             <p className="text-xs text-purple-800 mb-4">
               Nézd meg az összes ügyfél-chatbot beszélgetést.
             </p>
             <Link href={`/dashboard/bots/${botId}/logs`}>
-              <Button className="w-full bg-purple-600 hover:bg-purple-700 text-white">
+              <button className="ui-button ui-button-default ui-button-size-default w-full bg-purple-600 hover:bg-purple-700 text-white">
                 Előzmények Megtekintése
-              </Button>
+              </button>
             </Link>
-          </Card>
+          </div>
 
           {/* Preview */}
-          <Card className="p-6 border-2" style={{ borderColor: bot.color_hex }}>
+          <div className="ui-card p-6 border-2" style={{ borderColor: bot.color_hex }}>
             <h4 className="font-semibold mb-4">Előnézet</h4>
             <div
               className="rounded-lg p-4 text-white"
@@ -422,22 +422,22 @@ export default function BotSettingsPage() {
               <p className="text-sm font-semibold mb-2">{bot.name}</p>
               <p className="text-sm">{formData.welcomeMessage}</p>
             </div>
-          </Card>
+          </div>
 
           {/* Delete */}
-          <Card className="p-6 border-red-200 bg-red-50">
+          <div className="ui-card p-6 border-red-200 bg-red-50">
             <h4 className="font-semibold text-red-900 mb-2">Veszélyes zóna</h4>
             <p className="text-xs text-red-800 mb-4">
               A chatbot végleg törlésre kerül.
             </p>
-            <Button
+            <button
               onClick={handleDelete}
               disabled={isDeleting}
-              className="w-full bg-red-600 hover:bg-red-700 text-white"
+              className="ui-button ui-button-default ui-button-size-default w-full bg-red-600 hover:bg-red-700 text-white"
             >
               {isDeleting ? "Törlés..." : "Chatbot törlése"}
-            </Button>
-          </Card>
+            </button>
+          </div>
         </div>
       </div>
 

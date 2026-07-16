@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Card } from '@/components/ui/card';
 
 interface AnalyticsData {
   totalQuestions: number;
@@ -53,38 +52,38 @@ export function AnalyticsDashboard({ botId }: { botId: string }) {
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Total Questions */}
-        <Card className="p-6 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
+        <div className="ui-card p-6 bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
           <p className="text-sm text-gray-600">Összes Kérdés</p>
           <p className="text-3xl font-bold text-blue-600 mt-2">{stats.totalQuestions}</p>
           <p className="text-xs text-gray-500 mt-1">Utolsó 30 nap</p>
-        </Card>
+        </div>
 
         {/* Avg Response Time */}
-        <Card className="p-6 bg-gradient-to-br from-green-50 to-green-100 border-green-200">
+        <div className="ui-card p-6 bg-gradient-to-br from-green-50 to-green-100 border-green-200">
           <p className="text-sm text-gray-600">Átlag Válaszidő</p>
           <p className="text-3xl font-bold text-green-600 mt-2">{stats.avgResponseTime}ms</p>
           <p className="text-xs text-gray-500 mt-1">Gyorsabb jobb</p>
-        </Card>
+        </div>
 
         {/* Satisfaction */}
-        <Card className="p-6 bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
+        <div className="ui-card p-6 bg-gradient-to-br from-purple-50 to-purple-100 border-purple-200">
           <p className="text-sm text-gray-600">Megelégedettség</p>
           <p className="text-3xl font-bold text-purple-600 mt-2">{stats.satisfaction.satisfactionRate}%</p>
           <p className="text-xs text-gray-500 mt-1">
             👍 {stats.satisfaction.upvotes} | 👎 {stats.satisfaction.downvotes}
           </p>
-        </Card>
+        </div>
 
         {/* Total Ratings */}
-        <Card className="p-6 bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
+        <div className="ui-card p-6 bg-gradient-to-br from-orange-50 to-orange-100 border-orange-200">
           <p className="text-sm text-gray-600">Összesen Értékelve</p>
           <p className="text-3xl font-bold text-orange-600 mt-2">{stats.satisfaction.totalRatings}</p>
           <p className="text-xs text-gray-500 mt-1">Válaszok után</p>
-        </Card>
+        </div>
       </div>
 
       {/* Top Questions */}
-      <Card className="p-6">
+      <div className="ui-card p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">🔝 Leggyakoribb Kérdések</h3>
         <div className="space-y-2">
           {stats.topQuestions.length > 0 ? (
@@ -101,10 +100,10 @@ export function AnalyticsDashboard({ botId }: { botId: string }) {
             <p className="text-gray-500 text-sm">Nincsenek kérdések még</p>
           )}
         </div>
-      </Card>
+      </div>
 
       {/* Hourly Chart */}
-      <Card className="p-6">
+      <div className="ui-card p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">📊 Csúcsidők (Óránkénti)</h3>
         {stats.hourlyData && stats.hourlyData.length > 0 ? (
           <div className="flex items-end justify-between gap-1 h-32 bg-gray-50 p-3 rounded">
@@ -127,7 +126,7 @@ export function AnalyticsDashboard({ botId }: { botId: string }) {
           <p className="text-gray-500 text-sm">Nincsenek adatok az órákról</p>
         )}
         <p className="text-xs text-gray-500 mt-2 text-center">Óra (0-23)</p>
-      </Card>
+      </div>
 
       {/* Info Box */}
       <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded">

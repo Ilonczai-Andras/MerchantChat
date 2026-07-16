@@ -1,8 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { AnalyticsDashboard } from "@/components/AnalyticsDashboard";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/app/context/auth";
@@ -67,7 +65,7 @@ export default function DashboardPage() {
           </p>
         </div>
         <Link href="/dashboard/bots/new">
-          <Button>+ Új chatbot</Button>
+          <button className="ui-button ui-button-default ui-button-size-default">+ Új chatbot</button>
         </Link>
       </div>
 
@@ -105,27 +103,27 @@ export default function DashboardPage() {
         {isLoading ? (
           <p className="col-span-3 text-gray-500">Betöltés...</p>
         ) : bots.length === 0 ? (
-          <Card className="col-span-3 p-8 text-center">
+          <div className="ui-card col-span-3 p-8 text-center">
             <p className="text-gray-500 mb-4">
               Még nincs chatbotod. Hozz létre egy újat a kezdéshez.
             </p>
             <Link href="/dashboard/bots/new">
-              <Button>Első chatbot létrehozása</Button>
+              <button className="ui-button ui-button-default ui-button-size-default">Első chatbot létrehozása</button>
             </Link>
-          </Card>
+          </div>
         ) : (
           bots.map((bot) => (
-            <Card key={bot.id} className="p-6 hover:shadow-lg transition-shadow">
+            <div key={bot.id} className="ui-card p-6 hover:shadow-lg transition-shadow">
               <h3 className="text-lg font-semibold mb-2">{bot.name}</h3>
               <p className="text-xs text-gray-400 mb-4">
                 Létrehozva: {new Date(bot.created_at).toLocaleDateString("hu-HU")}
               </p>
               <Link href={`/dashboard/bots/${bot.id}`}>
-                <Button variant="outline" className="w-full">
+                <button className="ui-button ui-button-outline ui-button-size-default w-full">
                   Beállítások
-                </Button>
+                </button>
               </Link>
-            </Card>
+            </div>
           ))
         )}
       </div>
@@ -133,18 +131,18 @@ export default function DashboardPage() {
       {/* Quick Stats */}
       {!error && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
-          <Card className="p-6">
+          <div className="ui-card p-6">
             <p className="text-gray-600 text-sm">Összes chatbot</p>
             <p className="text-3xl font-bold mt-2">{bots.length}</p>
-          </Card>
-          <Card className="p-6">
+          </div>
+          <div className="ui-card p-6">
             <p className="text-gray-600 text-sm">Aktív konverzációk</p>
             <p className="text-3xl font-bold mt-2">0</p>
-          </Card>
-          <Card className="p-6">
+          </div>
+          <div className="ui-card p-6">
             <p className="text-gray-600 text-sm">Felhasználók</p>
             <p className="text-3xl font-bold mt-2">0</p>
-          </Card>
+          </div>
         </div>
       )}
 

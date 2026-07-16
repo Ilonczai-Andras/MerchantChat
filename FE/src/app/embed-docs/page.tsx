@@ -1,8 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import Link from 'next/link';
 
 export default function EmbedDocsPage() {
@@ -33,7 +31,7 @@ export default function EmbedDocsPage() {
         </div>
 
         {/* Quick Start */}
-        <Card className="p-8 mb-8 border-2 border-green-500 bg-green-50">
+        <div className="ui-card p-8 mb-8 border-2 border-green-500 bg-green-50">
           <h2 className="text-2xl font-bold text-green-900 mb-6">✅ Gyors Kezdés</h2>
           
           <div className="space-y-4">
@@ -42,12 +40,12 @@ export default function EmbedDocsPage() {
               <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
                 <code>{embedCode}</code>
               </div>
-              <Button
+              <button
                 onClick={handleCopyCode}
-                className="mt-3 bg-green-600 hover:bg-green-700 text-white"
+                className="ui-button ui-button-default ui-button-size-default mt-3 bg-green-600 hover:bg-green-700 text-white"
               >
                 {copiedCode ? '✓ Másolva!' : '📋 Másolás'}
-              </Button>
+              </button>
             </div>
 
             <div>
@@ -66,10 +64,10 @@ export default function EmbedDocsPage() {
               </p>
             </div>
           </div>
-        </Card>
+        </div>
 
         {/* Features */}
-        <Card className="p-8 mb-8">
+        <div className="ui-card p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">✨ Funkciók</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -121,10 +119,10 @@ export default function EmbedDocsPage() {
               </div>
             </div>
           </div>
-        </Card>
+        </div>
 
         {/* Troubleshooting */}
-        <Card className="p-8 mb-8 bg-yellow-50 border-2 border-yellow-300">
+        <div className="ui-card p-8 mb-8 bg-yellow-50 border-2 border-yellow-300">
           <h2 className="text-2xl font-bold text-yellow-900 mb-6">🔧 Hibaelhárítás</h2>
           
           <div className="space-y-4">
@@ -153,10 +151,10 @@ export default function EmbedDocsPage() {
               </ul>
             </div>
           </div>
-        </Card>
+        </div>
 
         {/* Example */}
-        <Card className="p-8">
+        <div className="ui-card p-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">📝 Teljes HTML Példa</h2>
           
           <div className="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-sm overflow-x-auto">
@@ -174,7 +172,7 @@ export default function EmbedDocsPage() {
 </body>
 </html>`}</pre>
           </div>
-        </Card>
+        </div>
 
         {/* Footer */}
         <div className="mt-12 text-center">

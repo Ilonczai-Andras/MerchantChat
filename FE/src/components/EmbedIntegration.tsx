@@ -1,8 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 
 interface EmbedIntegrationProps {
   botId: string;
@@ -28,7 +26,7 @@ export function EmbedIntegration({ botId, botName }: EmbedIntegrationProps) {
   };
 
   return (
-    <Card className="p-8 border-2 border-green-300 bg-green-50">
+    <div className="ui-card p-8 border-2 border-green-300 bg-green-50">
       <div className="flex items-center gap-3 mb-6">
         <span className="text-3xl">🌐</span>
         <div>
@@ -54,16 +52,16 @@ export function EmbedIntegration({ botId, botName }: EmbedIntegrationProps) {
         </div>
 
         {/* Copy Button */}
-        <Button
+        <button
           onClick={handleCopyCode}
-          className={`w-full text-white font-semibold ${
+          className={`ui-button ui-button-size-default w-full text-white font-semibold ${
             copiedCode
               ? 'bg-green-600 hover:bg-green-600'
               : 'bg-green-600 hover:bg-green-700'
           }`}
         >
           {copiedCode ? '✓ Másolva a vágólapra!' : '📋 Kód Másolása'}
-        </Button>
+        </button>
 
         {/* Instructions */}
         <div className="bg-white p-4 rounded border border-green-200">
@@ -95,6 +93,6 @@ export function EmbedIntegration({ botId, botName }: EmbedIntegrationProps) {
           </p>
         </div>
       </div>
-    </Card>
+    </div>
   );
 }

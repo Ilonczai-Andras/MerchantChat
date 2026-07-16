@@ -3,7 +3,6 @@
 import { ReactNode, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@/app/context/auth";
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
@@ -34,9 +33,9 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar - Fixed */}
-      <aside className="w-64 bg-white shadow fixed left-0 top-0 bottom-0 flex flex-col">
+    <div className="grid grid-cols-[20%_80%] min-h-screen bg-gray-100">
+      {/* Sidebar - Sticky */}
+      <aside className="h-screen sticky top-0 bg-white shadow flex flex-col">
         {/* Header */}
         <div className="p-6 border-b">
           <h2 className="text-2xl font-bold text-gray-900">MerchantChat</h2>
@@ -67,17 +66,17 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
         {/* Logout Button */}
         <div className="p-4 border-t">
-          <Button
+          <button
             onClick={handleLogout}
-            className="w-full bg-red-600 hover:bg-red-700 text-white font-medium"
+            className="ui-button ui-button-size-default w-full bg-red-600 hover:bg-red-700 text-white font-medium"
           >
             Kijelentkezés
-          </Button>
+          </button>
         </div>
       </aside>
 
-      {/* Main Content - Offset by sidebar */}
-      <main className="flex-1 ml-64">
+      {/* Main Content */}
+      <main className="min-h-screen flex flex-col">
         <header className="sticky top-0 z-10 bg-white shadow">
           <div className="px-8 py-4">
             <h1 className="text-xl font-semibold text-gray-900">Adminisztrátor Panel</h1>
