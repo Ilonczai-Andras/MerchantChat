@@ -3,9 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
 import { useAuth } from "@/app/context/auth";
 import { createBot } from "@/app/actions/bot";
 
@@ -86,7 +83,7 @@ export default function NewBotPage() {
         <h2 className="text-3xl font-bold mt-4">Új chatbot létrehozása</h2>
       </div>
 
-      <Card className="max-w-2xl p-8">
+      <div className="ui-card max-w-2xl p-8">
         {error && (
           <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded">
             {error}
@@ -98,13 +95,14 @@ export default function NewBotPage() {
             <label className="block text-sm font-semibold mb-2">
               Chatbot neve <span className="text-red-500">*</span>
             </label>
-            <Input
+            <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
               placeholder="pl. Ügyfélszolgálat Bot"
               required
+              className="ui-input"
             />
             <p className="text-xs text-gray-500 mt-1">
               Az ügyfeleid ezt a nevet fogják látni
@@ -123,13 +121,13 @@ export default function NewBotPage() {
                 onChange={handleChange}
                 className="w-16 h-10 rounded cursor-pointer"
               />
-              <Input
+              <input
                 type="text"
                 name="colorHex"
                 value={formData.colorHex}
                 onChange={handleChange}
                 placeholder="#3B82F6"
-                className="flex-1"
+                className="ui-input flex-1"
               />
             </div>
             <p className="text-xs text-gray-500 mt-1">
@@ -155,27 +153,28 @@ export default function NewBotPage() {
           </div>
 
           <div className="flex gap-4">
-            <Button 
+            <button
               type="submit" 
               disabled={isLoading || !formData.name.trim() || !formData.colorHex.trim() || !formData.welcomeMessage.trim()}
+              className="ui-button ui-button-default ui-button-size-default"
             >
               {isLoading ? "Létrehozás..." : "Chatbot létrehozása"}
-            </Button>
+            </button>
             <Link href="/dashboard">
-              <Button variant="outline">Mégse</Button>
+              <button className="ui-button ui-button-outline ui-button-size-default">Mégse</button>
             </Link>
           </div>
         </form>
-      </Card>
+      </div>
 
       {/* Template suggestions */}
       <div className="mt-12">
         <h3 className="text-lg font-semibold mb-4">Sablonok</h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {templates.map((template) => (
-            <Card
+            <div
               key={template.id}
-              className="p-4 cursor-pointer hover:shadow-lg transition-shadow"
+              className="ui-card p-4 cursor-pointer hover:shadow-lg transition-shadow"
               onClick={() =>
                 setFormData({
                   name: template.name,
@@ -192,7 +191,7 @@ export default function NewBotPage() {
                 <h4 className="font-semibold">{template.name}</h4>
               </div>
               <p className="text-sm text-gray-600">{template.description}</p>
-            </Card>
+            </div>
           ))}
         </div>
       </div>

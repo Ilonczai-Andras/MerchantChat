@@ -2,7 +2,6 @@
 
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Button } from '@/components/ui/button';
 import { ChatLogsViewer } from '@/components/ChatLogsViewer';
 
 export default function ChatLogsPage() {
@@ -13,13 +12,12 @@ export default function ChatLogsPage() {
   return (
     <div>
       <div className="mb-6">
-        <Button
-          variant="secondary"
+        <button
           onClick={() => router.back()}
-          className="mb-4"
+          className="ui-button ui-button-secondary ui-button-size-default mb-4"
         >
           ← Vissza
-        </Button>
+        </button>
         <h1 className="text-3xl font-bold">💬 Beszélgetés Előzmények</h1>
         <p className="text-gray-600 mt-2">
           Az összes ügyfél-chatbot beszélgetés a jelen bottal

@@ -3,9 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
 import { useAuth } from "@/app/context/auth";
 
 export default function LoginPage() {
@@ -54,13 +51,13 @@ export default function LoginPage() {
   if (isAuthenticated && user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <Card className="w-full max-w-md p-8">
+        <div className="ui-card w-full max-w-md p-8">
           <h1 className="text-2xl font-bold mb-6">Bejelentkezve</h1>
 
           <Link href="/dashboard">
-            <Button className="w-full mb-3">
+            <button className="ui-button ui-button-default ui-button-size-default w-full mb-3">
               Irányítópultra
-            </Button>
+            </button>
           </Link>
 
           <button
@@ -69,21 +66,21 @@ export default function LoginPage() {
           >
             Kijelentkezés
           </button>
-        </Card>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md p-8">
+      <div className="ui-card w-full max-w-md p-8">
         <h1 className="text-3xl font-bold mb-2">
           {mode === "login" ? "Bejelentkezés" : "Regisztráció"}
         </h1>
         <p className="text-gray-600 mb-6">
           {mode === "login"
-            ? "Jelentkezz be az adminisztrátor panelre"
-            : "Hozz létre egy új fiókot"}
+              ? "Jelentkezz be az adminisztrátor panelre"
+              : "Hozz létre egy új fiókot"}
         </p>
 
         {error && (
@@ -95,29 +92,31 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Email</label>
-            <Input
+            <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="email@example.com"
               required
+              className="ui-input"
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium mb-1">Jelszó</label>
-            <Input
+            <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               required
+              className="ui-input"
             />
           </div>
 
-          <Button
+          <button
             type="submit"
-            className="w-full"
+            className="ui-button ui-button-default ui-button-size-default w-full"
             disabled={isLoading}
           >
             {isLoading
@@ -125,7 +124,7 @@ export default function LoginPage() {
               : mode === "login"
                 ? "Bejelentkezés"
                 : "Regisztráció"}
-          </Button>
+          </button>
         </form>
 
         <div className="mt-6 text-center">
@@ -155,7 +154,7 @@ export default function LoginPage() {
             </>
           )}
         </div>
-      </Card>
+      </div>
     </div>
   );
 }

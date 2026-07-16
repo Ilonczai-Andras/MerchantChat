@@ -1,8 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 
 interface ChatLog {
   id: string;
@@ -86,19 +84,17 @@ export function ChatLogsViewer({ botId }: { botId: string }) {
         const timeStr = date.toLocaleString('hu-HU');
 
         return (
-          <Card key={log.id} className="p-4 hover:shadow-md transition-shadow">
+          <div key={log.id} className="ui-card p-4 hover:shadow-md transition-shadow">
             <div className="flex items-start justify-between mb-3">
               <div className="text-xs text-gray-500">
                 ⏰ {timeStr}
               </div>
-              <Button
-                size="sm"
-                variant="destructive"
+              <button
                 onClick={() => handleDeleteLog(log.id)}
-                className="text-xs h-6 px-2"
+                className="ui-button ui-button-destructive ui-button-size-sm text-xs h-6 px-2"
               >
                 🗑️ Törlés
-              </Button>
+              </button>
             </div>
 
             {/* User Message */}
@@ -112,7 +108,7 @@ export function ChatLogsViewer({ botId }: { botId: string }) {
               <p className="text-xs font-semibold text-green-900 mb-1">🤖 Chatbot</p>
               <p className="text-sm text-gray-800">{log.bot_response}</p>
             </div>
-          </Card>
+          </div>
         );
       })}
     </div>

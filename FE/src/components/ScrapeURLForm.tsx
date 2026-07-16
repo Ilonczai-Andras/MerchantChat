@@ -1,8 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 
 interface ScrapeURLFormProps {
   botId: string;
@@ -69,22 +67,22 @@ export default function ScrapeURLForm({ botId, onScrapeSuccess }: ScrapeURLFormP
       <p className="text-sm text-gray-600">Másold be egy weboldal URL-t - a tartalom hozzáadódik a meglévőhöz</p>
 
       <form onSubmit={handleScrape} className="space-y-3">
-        <Input
+        <input
           type="url"
           value={url}
           onChange={(e) => setUrl(e.target.value)}
           placeholder="https://example.com/faq vagy https://webshop.hu/szallitas"
           disabled={isLoading}
-          className="w-full"
+          className="ui-input w-full"
         />
 
-        <Button
+        <button
           type="submit"
           disabled={isLoading || !url.trim()}
-          className="w-full"
+          className="ui-button ui-button-default ui-button-size-default w-full"
         >
           {isLoading ? '⏳ Leszedés...' : '🌐 URL Feldolgozása'}
-        </Button>
+        </button>
       </form>
 
       {error && <div className="text-sm text-red-600">{error}</div>}

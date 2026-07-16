@@ -1,9 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
 
 interface Message {
   id: string;
@@ -179,7 +176,7 @@ export default function ChatWidget({
   };
 
   return (
-    <Card className="flex flex-col h-full bg-white rounded-lg shadow-lg overflow-hidden">
+    <div className="ui-card flex flex-col h-full bg-white rounded-lg shadow-lg overflow-hidden">
       {/* Header */}
       <div
         className="p-4 text-white flex items-center gap-3"
@@ -289,24 +286,24 @@ export default function ChatWidget({
       {/* Input */}
       <form onSubmit={handleSendMessage} className="p-4 border-t bg-gray-50">
         <div className="flex gap-2">
-          <Input
+          <input
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="Írd be a kérdésedet..."
             disabled={isLoading}
-            className="flex-1"
+            className="ui-input flex-1"
           />
-          <Button
+          <button
             type="submit"
             disabled={isLoading || !inputValue.trim()}
             style={{ backgroundColor: botColor }}
-            className="text-white hover:opacity-90"
+            className="ui-button ui-button-default ui-button-size-default text-white hover:opacity-90"
           >
             {isLoading ? "..." : "Küld"}
-          </Button>
+          </button>
         </div>
       </form>
-    </Card>
+    </div>
   );
 }
